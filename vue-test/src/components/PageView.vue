@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="page && page.pageTitle && page.pageContent" class="container">
     <h1 class="emphasize">{{ page.pageTitle }}</h1>
     <p>{{ page.pageContent }}</p>
   </div>
@@ -7,15 +7,20 @@
 
 <script>
 export default {
-  props: {
-    page: {
-      type: Object,
-      default(rawProps) {
-        return {
-          pageTitle: 'No Page Title',
-          pageContent: 'No Page Content'
-        }
-      }
+  created() {
+    console.log(this.$route.params)
+
+    this.page = this.$pages.getStorePage(this.$route.params.index);
+
+    this.$watch(() => this.$route.params, (newParams, oldParams) => {
+      this.page = this.$pages.getStorePage(newParams.index);
+    })
+
+  },
+
+  data() {
+    return {
+      page: null
     }
   }
 }

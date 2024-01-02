@@ -1,9 +1,11 @@
 <template>
-  <navbar :pages="pages" :active-page="activePage" :nav-link-click="(index) => activePage = index"></navbar>
+  <navbar :pages="pages" :active-page="activePage" ></navbar>
 
-  <!-- <page-view v-if="pages.length > 0" :page="pages[activePage]"></page-view> -->
+  <router-view></router-view>
 
-  <create-page @page-created="pageCreated" />
+  <!-- <page-view v-if="pages.length > 0" :page="pages[activePage]"></page-view>
+
+  <create-page @page-created="pageCreated" /> -->
 </template>
 
 <script>
@@ -24,9 +26,15 @@ export default {
       pages: []
     }
   },
+
   created() {
     this.getPages();
+
+    this.$bus.$on('navbarLinkActivated', (index) => {
+      this.activePage = index
+    })
   },
+
   methods: {
     async getPages() {
       let response = await fetch('/pages.json')
@@ -34,6 +42,7 @@ export default {
 
       this.pages = data
     },
+
     pageCreated(pageObject) {
       this.pages.push(pageObject)
       console.log(this.pages)

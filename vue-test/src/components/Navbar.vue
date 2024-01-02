@@ -3,8 +3,22 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li v-for="(page, index) in publishedPages" class="nav-item" :key="index">
-          <navbar-link :page="page" :active="activePage == index" @click.prevent="navLinkClick(index)"></navbar-link>
+        <navbar-link 
+          v-for="(page, index) in publishedPages" 
+          class="nav-item" 
+          :key="index" 
+          :page="page" 
+          :index="index" 
+          :active="activePage == index" 
+          @activated="$emit('activated')"
+        ></navbar-link>
+
+        <li>
+          <router-link 
+            to="create" 
+            class="nav-link" 
+            aria-current="page"
+          >Create Page</router-link>
         </li>
       </ul>
       <form class="d-flex">
@@ -21,20 +35,24 @@ export default {
   components: {
     NavbarLink
   },
+  
   created() {
     this.getTheme()
   },
+
   computed: {
     publishedPages() {
       return this.pages.filter(page => page.pagePublished)
     }
   },
-  props: ['pages', 'activePage', 'navLinkClick'],
+
+  props: ['pages', 'activePage'],
   data() {
     return {
       theme: 'dark'
     }
   },
+
   methods: {
     changeTheme() {
       let theme = 'light'

@@ -48,8 +48,8 @@
 <script>
 export default {
   emits: {
-    pageCreated(pageTitle, pageContent, link) {
-      if (pageTitle == '' || pageContent == '' || !link || link.text == '' || link.url == '') {
+    pageCreated({ pageTitle, pageContent, link, pagePublished }) {
+      if (pageTitle === '' || pageContent === '' || !link || !link.text || link.text === '' || !link.url || link.url === '' || pagePublished === null) {
         return false;
       }
       return true;

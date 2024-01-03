@@ -8,17 +8,16 @@
           class="nav-item" 
           :key="index" 
           :page="page" 
-          :index="index" 
-          :active="activePage == index" 
-          @activated="$emit('activated')"
+          :index="index"
         ></navbar-link>
 
         <li>
           <router-link 
-            to="create" 
-            class="nav-link" 
+            to="/pages" 
+            class="nav-link"
+            active-class="active"
             aria-current="page"
-          >Create Page</router-link>
+          >Pages</router-link>
         </li>
       </ul>
       <form class="d-flex">
@@ -32,24 +31,43 @@
 import NavbarLink from './NavbarLink.vue'
 
 export default {
+  inject: ['$pages', '$bus'],
+
   components: {
     NavbarLink
   },
+
+  props: {
+    editedPage: {
+      type: Object,
+      default: null
+    }
+  },
   
   created() {
-    this.getTheme()
+    this.getTheme();
+
+    this.pages = this.$pages.getStorePages();
+
+    this.$bus.$on('pageEdited', () => {
+      this.pages = [...this.$pages.getStorePages()];
+    })
+
+    this.$bus.$on('pageCreated', () => {
+      this.pages = [...this.$pages.getStorePages()];
+    })
   },
 
   computed: {
     publishedPages() {
-      return this.pages.filter(page => page.pagePublished)
+      return this.pages.filter(page => page.pagePublished || page === this.editedPage)
     }
   },
 
-  props: ['pages', 'activePage'],
   data() {
     return {
-      theme: 'dark'
+      theme: 'dark',
+      pages: []
     }
   },
 
@@ -77,9 +95,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.emphasize {
-  text-decoration: underline !important;
-}
-</style>

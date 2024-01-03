@@ -7,14 +7,13 @@
 
 <script>
 export default {
+  props: ['index'],
+  inject: ['$pages'],
+
   created() {
-    console.log(this.$route.params)
+    console.log(this.index);
 
-    this.page = this.$pages.getStorePage(this.$route.params.index);
-
-    this.$watch(() => this.$route.params, (newParams, oldParams) => {
-      this.page = this.$pages.getStorePage(newParams.index);
-    })
+    this.page = this.$pages.getStorePage(this.index);
 
   },
 
@@ -22,6 +21,14 @@ export default {
     return {
       page: null
     }
+  },
+
+  watch: {
+
+    index(newIndex, oldIndex) {
+      this.page = this.$pages.getStorePage(newIndex);
+    }
+    
   }
 }
 </script>

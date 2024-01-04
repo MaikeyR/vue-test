@@ -9,6 +9,7 @@
           :key="index" 
           :page="page" 
           :index="index"
+          :page-link-text="pageLinkText"
         ></navbar-link>
 
         <li>
@@ -36,13 +37,6 @@ export default {
   components: {
     NavbarLink
   },
-
-  props: {
-    editedPage: {
-      type: Object,
-      default: null
-    }
-  },
   
   created() {
     this.getTheme();
@@ -51,16 +45,22 @@ export default {
 
     this.$bus.$on('pageEdited', () => {
       this.pages = [...this.$pages.getStorePages()];
-    })
+      console.log('Updated pages:', this.pages);
+    });
 
     this.$bus.$on('pageCreated', () => {
       this.pages = [...this.$pages.getStorePages()];
-    })
+      console.log('Created pages:', this.pages);
+    });
   },
 
   computed: {
     publishedPages() {
-      return this.pages.filter(page => page.pagePublished || page === this.editedPage)
+      return this.pages.filter(page => page.pagePublished);
+    },
+
+    pageLinkText() {
+      return this.publishedPages.map(page => page.link.text);
     }
   },
 

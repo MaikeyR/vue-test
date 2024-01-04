@@ -19,7 +19,7 @@
       <tr
         v-for="(page, index) in $pages.getStorePages()"
         :key="index"
-        @click="toPage(index)"
+        @click="toEditPage(index)"
       >
         <td>{{ page.pageTitle }}</td>
         <td>{{ page.link.text }}</td>
@@ -36,7 +36,7 @@ import { useRouter } from 'vue-router'
 const $pages = inject('$pages')
 const $router = useRouter()
 
-const toPage = (index) => {
+const toEditPage = (index) => {
   $router.push({ path: `/pages/${index}/edit` })
 }
 

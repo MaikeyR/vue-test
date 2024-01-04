@@ -39,18 +39,12 @@
 
 <script setup>
 
-import { defineProps, watch, ref, inject, computed } from 'vue'
+import { watch, ref, inject, computed } from 'vue'
 import { useRouter } from 'vue-router';
 
 const route = useRouter()
 const pages = inject('$pages')
 const bus = inject('$bus')
-
-const {index} = defineProps({
-  index: {
-    type: String
-  }
-})
 
 const pageTitle = ref('');
 const pageContent = ref('');
@@ -58,7 +52,7 @@ const pageLinkText = ref('');
 const pagePublished = ref(true);
 
 const submitForm = () => {
-  if (pageTitle == '' || pageContent == '' || pageLinkText == '') {
+  if (!pageTitle || !pageContent || !pageLinkText) {
     alert('All fields are required')
     return;
   }
@@ -79,7 +73,7 @@ const submitForm = () => {
   route.push({ path: '/pages' })
 }
 
-const isFormInvalid = computed(() => pageTitle == '' || pageContent == '' || pageLinkText == '')
+const isFormInvalid = computed(() => !pageTitle || !pageContent || !pageLinkText)
 
 watch(pageTitle, (newTitle, oldTitle) => {
   if (pageLinkText.value == oldTitle) {

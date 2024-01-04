@@ -51,9 +51,12 @@
           @click.prevent="submitForm" 
           :disabled="isFormInvalid"
         >Edit</button>
-        <button class="btn btn-secondary" 
-          @click.prevent="submitForm"
+        <button class="btn btn-secondary"
+          @click.prevent="goToPageList"
         >Cancel</button>
+        <button class="btn btn-danger"
+          @click.prevent="deletePage"
+        >Delete</button>
       </div>
     </div>
   </form>
@@ -69,49 +72,35 @@ const route = useRouter()
 const pages = inject('$pages')
 const bus = inject('$bus')
 
-const {index} = defineProps({
-  index: {
-    type: String
-  }
-})
+const {index} = defineProps(['index'])
 
 const page = pages.getStorePage(index);
 console.log(index);
 
-const pageTitle = ref(page.pageTitle);
-const pageContent = ref(page.pageContent);
-const pageLinkText = ref(page.link.text);
-const pagePublished = ref(page.pagePublished);
-
-
 const submitForm = () => {
-  if (pageTitle == '' || pageContent == '' || pageLinkText == '') {
+  if (!page.pageTitle || !page.pageContent || !page.link.text) {
     alert('All fields are required')
     return;
   }
 
-  let editPage = {
-    pageTitle: pageTitle.value,
-    pageContent: pageContent.value,
-    link: {
-      text: pageLinkText.value
-    },
-    pagePublished: pagePublished.value
-  }
+  pages.editPage(index, page)
 
-  pages.editPage(editPage)
+  bus.$emit('pageEdited', { index, page })
 
-  bus.$emit('pageEdited', editPage)
+  goToPageList()
+}
 
+const deletePage = () => {
+  pages.deletePage(index)
+  goToPageList()
+}
+
+const goToPageList = () => {
   route.push({ path: '/pages' })
 }
 
-const isFormInvalid = computed(() => pageTitle == '' || pageContent == '' || pageLinkText == '')
+console.log(page.pageTitle, page.pageContent, page.link.text);
 
-watch(pageTitle, (newTitle, oldTitle) => {
-  if (pageLinkText.value == oldTitle) {
-    pageLinkText.value = newTitle
-  }
-})
+const isFormInvalid = computed(() => !page.pageTitle || !page.pageContent || !page.link.text)
 
 </script>

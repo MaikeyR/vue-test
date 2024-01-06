@@ -30,6 +30,7 @@
 
 <script>
 import NavbarLink from './NavbarLink.vue'
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   inject: ['$pages', '$bus'],
@@ -39,7 +40,9 @@ export default {
   },
   
   created() {
-    this.getTheme();
+    // this.getTheme();
+    const storedTheme = localStorage.getItem('theme');
+    this.setTheme(storedTheme || 'light');
 
     this.pages = this.$pages.getStorePages();
 
@@ -61,37 +64,24 @@ export default {
 
     pageLinkText() {
       return this.publishedPages.map(page => page.link.text);
-    }
+    },
+
+    ...mapState(['theme'])
   },
 
   data() {
     return {
-      theme: 'dark',
       pages: []
     }
   },
 
   methods: {
+    ...mapMutations(['setTheme']),
+
     changeTheme() {
-      let theme = 'light'
-      if (this.theme === 'light') {
-        theme = 'dark'
-      }
-      this.theme = theme
-      this.storeTheme()
+      const theme = this.theme === 'light' ? 'dark' : 'light';
+      this.setTheme(theme);
     },
-
-    storeTheme() {
-      localStorage.setItem('theme', this.theme)
-    },
-
-    getTheme() {
-      let theme = localStorage.getItem('theme')
-
-      if (theme) {
-        this.theme = theme;
-      }
-    }
   }
 }
 </script>
